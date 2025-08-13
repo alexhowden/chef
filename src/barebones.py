@@ -1,0 +1,47 @@
+valid = False
+while not valid:
+	nums = input("Enter your equation (ex: 1024x48): ")
+
+	try:
+		a, b = nums.split("x")
+		if int(a) and int(b):
+			valid = True
+	except ValueError:
+		pass
+
+print(f"""
+
+{a.rjust(len(b) + 2)}
+x {b.rjust(max(0, len(a) - len(b) - 1))}
+{"–" * max(len(a), len(b) + 2)}
+
+""")
+
+int_a = int(a)
+int_b = int(b)
+
+solved = False
+while not solved:
+	next_a = int_a % 10
+	next_b = int_b % 10
+
+	calc = next_a * next_b
+	print(f"calc: {calc}")
+
+	correct = False
+	while not correct:
+		try:
+			val = input(f"{next_a} x {next_b}: ")
+			correct = int(val) == calc
+		except ValueError:
+			pass
+
+	int_a = int(int_a / 10)
+	if int_a == 0:
+		int_b = int(int_b / 10)
+		int_a = int(a)
+
+		if int_b == 0:
+			solved = True
+
+print("solved!")
