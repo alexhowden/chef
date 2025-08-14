@@ -1,10 +1,9 @@
 import tkinter as tk
 from tkinter import ttk
-from tkinter import *
 from random import randrange
 
-BIGFONT = ("Courier New", 35)
-REGFONT = ("Helvecta", 22)
+FONT_TITLE = ("Courier New", 35)
+FONT_CONTENT = ("Helvetica", 22)
 
 DIFFICULTIES = [
 	(3,2),
@@ -18,7 +17,7 @@ class App(tk.Tk):
 		tk.Tk.__init__(self)
 
 		self.title("chef")
-		self.geometry("500x500")
+		self.geometry("800x550")
 
 		container = ttk.Frame(self)
 		container.pack(side="top", fill="both", expand=True)
@@ -41,8 +40,8 @@ class App(tk.Tk):
 		self.show_frame(DifficultyPage)
 
 		style = ttk.Style(self)
+		style.configure("TButton", font=FONT_CONTENT)
 		style.map("TButton", foreground=[('active', 'blue')])
-		style.configure("TLabel", Activebackground='blue')
 
 	def show_frame(self, cont):
 		frame = self.frames[cont]
@@ -52,12 +51,17 @@ class DifficultyPage(tk.Frame):
 	def __init__(self, parent, controller):
 		tk.Frame.__init__(self, parent)
 
-		label = ttk.Label(self, text="Select Your Difficulty", font=BIGFONT)
-		label.grid(row=0, column=4, padx=10, pady=10)
+		self.grid_columnconfigure(0, weight=1)
+		self.grid_columnconfigure(2, weight=1)
+		self.grid_rowconfigure(0, weight=1)
+		self.grid_rowconfigure(5, weight=1)
+
+		label = ttk.Label(self, text="Select Your Difficulty", font=FONT_TITLE)
+		label.grid(row=0, column=1, padx=10, pady=10)
 
 		for i in range(len(DIFFICULTIES)):
 			a, b = DIFFICULTIES[i]
-			ttk.Button(self, text=f"{a}x{b}", width=0, command = lambda f=f"Mult_{a}x{b}": controller.show_frame(f)).grid(row=i+1, column=1, padx=5, pady=10)
+			ttk.Button(self, text=f"{a}x{b}", command = lambda f=f"Mult_{a}x{b}": controller.show_frame(f)).grid(row=i+1, column=1, padx=5, pady=10)
 
 class MultiplicationPage(tk.Frame):
 	def __init__(self, parent, controller, len_a, len_b):
@@ -67,7 +71,7 @@ class MultiplicationPage(tk.Frame):
 		titlebar.pack(fill="x", pady=10)
 
 		ttk.Button(titlebar, text="<", width=0, command = lambda : controller.show_frame(DifficultyPage)).pack(side="left", padx=10)
-		ttk.Label(titlebar, text=f"{len_a}x{len_b} Multiplication", font=BIGFONT).pack(side="top")
+		ttk.Label(titlebar, text=f"{len_a}x{len_b} Multiplication", font=FONT_TITLE).pack(side="top")
 
 		a, b = generate_problem(len_a, len_b)
 		self.problem = Problem(self, a, b)
@@ -99,16 +103,16 @@ class Problem(tk.Frame):
 
 		tallies = []
 		for c in range(num_cols - len(a) - 1, num_cols - 1):
-			tally = ttk.Entry(content, font=REGFONT, width=1, validate="key", validatecommand=val_cmd)
+			tally = ttk.Entry(content, font=FONT_CONTENT, width=1, validate="key", validatecommand=val_cmd)
 			tally.grid(row=0, column=c)
 			tallies.append(tally)
 
 		seq_a = [*a]
 		seq_b = ['x', ' ', *b]
 		for c, val in enumerate(seq_a):
-			ttk.Label(content, text=val, font=REGFONT, width=1).grid(row=1, column=c+(num_cols-len(seq_a)))
+			ttk.Label(content, text=val, font=FONT_CONTENT, width=1).grid(row=1, column=c+(num_cols-len(seq_a)))
 		for c, val in enumerate(seq_b):
-			ttk.Label(content, text=val, font=REGFONT, width=1).grid(row=2, column=c+(num_cols-len(seq_b)))
+			ttk.Label(content, text=val, font=FONT_CONTENT, width=1).grid(row=2, column=c+(num_cols-len(seq_b)))
 
 		entries = []
 		checks = []
@@ -116,11 +120,11 @@ class Problem(tk.Frame):
 			infocus = focus + 3 == r
 
 			for c in range(num_cols):
-				entry = ttk.Entry(content, font=REGFONT, width=1, validate="key", validatecommand=val_cmd, state='potato' if infocus else 'disabled')
+				entry = ttk.Entry(content, font=FONT_CONTENT, width=1, validate="key", validatecommand=val_cmd, state='normal' if infocus else 'disabled')
 				entry.grid(row=r, column=c)
 				entries.append(entry)
 
-			check = tk.Label(content, text=">" if infocus else '', font=REGFONT, width=1, background='blue' if infocus else content['background'], padx=2)
+			check = tk.Label(content, text=">" if infocus else '', font=FONT_CONTENT, width=1, background='blue' if infocus else content['background'], padx=2)
 			check.grid(row=r, column=num_cols)
 			check.bind("<Button-1>", lambda event, row=r-3: check_row(event, row)) if infocus else check.unbind("<Button-1>")
 			checks.append(check)
@@ -148,7 +152,7 @@ class Problem(tk.Frame):
 			for c in range(num_cols):
 				entries[focus * num_cols + c].config(state='disabled')
 				if focus != len(b):
-					entries[(focus + 1) * num_cols + c].config(state='potato')
+					entries[(focus + 1) * num_cols + c].config(state='normal')
 
 			if focus == len(b):
 				parent.new_problem(len(a), len(b))
@@ -192,7 +196,6 @@ def solve(a, b):
 	while len(solution) % num_cols != 0:
 		solution.append(0)
 
-	print(solution)
 	return solution
 
 if __name__ == "__main__":
