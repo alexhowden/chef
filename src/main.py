@@ -70,8 +70,15 @@ class MultiplicationPage(tk.Frame):
 		ttk.Label(titlebar, text=f"{len_a}x{len_b} Multiplication", font=BIGFONT).pack(side="top")
 
 		a, b = generate_problem(len_a, len_b)
-		problem = Problem(self, a, b)
-		problem.pack(fill="both", expand=True, pady=20)
+		self.problem = Problem(self, a, b)
+		self.problem.pack(fill="both", expand=True, pady=20)
+
+	def new_problem(self, len_a, len_b):
+		self.problem.destroy()
+		a, b = generate_problem(len_a, len_b)
+		self.problem = Problem(self, a, b)
+		self.problem.pack(fill="both", expand=True, pady=20)
+		self.problem.update_idletasks()
 
 class Problem(tk.Frame):
 	def __init__(self, parent, a, b):
@@ -125,7 +132,6 @@ class Problem(tk.Frame):
 				user_val = 0 if entries[i].get() == '' else int(entries[i].get())
 
 				if solution[sol_ind] != int(user_val):
-					print(solution[sol_ind], int(user_val))
 					checks[focus].config(background='red')
 					return
 
@@ -145,6 +151,7 @@ class Problem(tk.Frame):
 					entries[(focus + 1) * num_cols + c].config(state='potato')
 
 			if focus == len(b):
+				parent.new_problem(len(a), len(b))
 				return
 
 			focus += 1
