@@ -58,7 +58,7 @@ class DifficultyPage(tk.Frame):
 		self.grid_columnconfigure(0, weight=1)
 		self.grid_columnconfigure(2, weight=1)
 		self.grid_rowconfigure(0, weight=1)
-		self.grid_rowconfigure(6, weight=1)
+		self.grid_rowconfigure(len(DIFFICULTIES) + 2, weight=1)
 
 		label = ttk.Label(self, text='Select Your Difficulty', font=FONT_TITLE)
 		label.grid(row=0, column=1, padx=10, pady=10)
@@ -67,7 +67,7 @@ class DifficultyPage(tk.Frame):
 			a, b = DIFFICULTIES[i]
 			ttk.Button(self, text=f'{a}x{b}', command = lambda f=f'Mult_{a}x{b}': controller.show_frame(f)).grid(row=i+1, column=1, padx=5, pady=10)
 
-		ttk.Button(self, text='Stats', command = lambda : controller.show_frame(StatsPage)).grid(row=5, column=1, padx=5, pady=10)
+		ttk.Button(self, text='Stats', command = lambda : controller.show_frame(StatsPage)).grid(row=len(DIFFICULTIES)+1, column=1, padx=5, pady=10)
 
 class StatsPage(tk.Frame):
 	def __init__(self, parent, controller):
@@ -179,7 +179,7 @@ class Problem(tk.Frame):
 		focus = 0
 
 		tallies = []
-		for c in range(num_cols - len(a) - 1, num_cols - 1):
+		for c in range(num_cols - len(a), num_cols):
 			tally = ttk.Entry(content, font=FONT_CONTENT, width=1, validate='key', validatecommand=val_cmd)
 			tally.grid(row=0, column=c)
 			tallies.append(tally)
@@ -187,9 +187,9 @@ class Problem(tk.Frame):
 		seq_a = [*a]
 		seq_b = ['x', ' ', *b]
 		for c, val in enumerate(seq_a):
-			ttk.Label(content, text=val, font=FONT_CONTENT, width=1).grid(row=1, column=c+(num_cols-len(seq_a)))
+			ttk.Label(content, text=val, font=FONT_CONTENT, width=1).grid(row=1, column=c+1+(num_cols-len(seq_a)))
 		for c, val in enumerate(seq_b):
-			ttk.Label(content, text=val, font=FONT_CONTENT, width=1).grid(row=2, column=c+(num_cols-len(seq_b)))
+			ttk.Label(content, text=val, font=FONT_CONTENT, width=1).grid(row=2, column=c+1+(num_cols-len(seq_b)))
 
 		entries = []
 		checks = []
@@ -198,13 +198,15 @@ class Problem(tk.Frame):
 
 			for c in range(num_cols):
 				entry = ttk.Entry(content, font=FONT_CONTENT, width=1, validate='key', validatecommand=val_cmd, state='normal' if infocus else 'disabled')
-				entry.grid(row=r, column=c)
+				entry.grid(row=r, column=c+1)
 				entries.append(entry)
 
 			check = tk.Label(content, text='>' if infocus else '', font=FONT_CONTENT, width=1, background='blue' if infocus else content['background'], padx=2)
-			check.grid(row=r, column=num_cols)
+			check.grid(row=r, column=num_cols+1)
 			check.bind('<Button-1>', lambda event, row=r-3: check_row(event, row)) if infocus else check.unbind('<Button-1>')
 			checks.append(check)
+
+		ttk.Label(content, text='+', font=FONT_CONTENT, width=1).grid(row=len(b) + 2, column=0)
 
 		def check_row(event, row):
 			nonlocal focus
