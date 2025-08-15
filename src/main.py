@@ -94,21 +94,24 @@ class StatsPage(tk.Frame):
 		self.content = tk.Frame(stats)
 		self.content.grid(row=1, column=1, padx=10, pady=10)
 
+		self.labels = []
+
 	def refresh(self):
 		user_data = self.retrieve()
 
-		labels = {}
+		for label in self.labels:
+			label.destroy()
 
-		label = ttk.Label(self.content, text=f'Balance: {user_data['balance']}', font=FONT_CONTENT)
+		label = ttk.Label(self.content, text=f'Balance: {user_data['balance']:.2f}', font=FONT_CONTENT)
 		label.grid(row=0, column=0, padx=10, pady=10)
-		labels['balance'] = label
+		self.labels.append(label)
 
 		row = 1
 		for key, value in user_data.items():
 			if key.endswith('answered'):
 				label = ttk.Label(self.content, text=f'{key[0:3]} Questions Answered: {value}', font=FONT_CONTENT)
 				label.grid(row=row, column=0, padx=10, pady=10)
-				labels[key] = label
+				self.labels.append(label)
 				row += 1
 
 	def retrieve(self):
