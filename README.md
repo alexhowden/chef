@@ -9,3 +9,5 @@ Checks work after each row to more easily identify mistakes.
 Designed to help practice the basics, beyond that I would recommend solving problems on paper for mastery.
 
 Credits are awarded for solving problems correctly, to be redeemed for various things.
+
+<img width="1432" height="944" alt="sample" src="https://github.com/user-attachments/assets/cbe06a23-dcda-4949-8b26-1222e17f0c7d" />
